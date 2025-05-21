@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manageusers.mapper.UsersMapper">
+    
+    <resultMap type="Users" id="UsersResult">
+        <result property="peopleId"    column="people_id"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="thirdPartyId"    column="third_party_id"    />
+        <result property="password"    column="password"    />
+        <result property="userRole"    column="user_role"    />
+        <result property="username"    column="username"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="age"    column="age"    />
+        <result property="gender"    column="gender"    />
+        <result property="height"    column="height"    />
+        <result property="originalweight"    column="originalweight"    />
+        <result property="currentweight"    column="currentweight"    />
+        <result property="fatPercentage"    column="fat_percentage"    />
+        <result property="healthStatus"    column="health_status"    />
+        <result property="targetWeight"    column="target_weight"    />
+        <result property="preference"    column="preference"    />
+        <result property="allergies"    column="allergies"    />
+        <result property="registration"    column="registration"    />
+        <result property="lastLogin"    column="last_login"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectUsersVo">
+        select people_id, phone, email, third_party_id, password, user_role, username, birthday, age, gender, height, originalweight, currentweight, fat_percentage, health_status, target_weight, preference, allergies, registration, last_login, is_active, user_id from users
+    </sql>
+
+    <select id="selectUsersList" parameterType="Users" resultMap="UsersResult">
+        <include refid="selectUsersVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="healthStatus != null  and healthStatus != ''"> and health_status = #{healthStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectUsersByPeopleId" parameterType="Long" resultMap="UsersResult">
+        <include refid="selectUsersVo"/>
+        where people_id = #{peopleId}
+    </select>
+
+    <insert id="insertUsers" parameterType="Users" useGeneratedKeys="true" keyProperty="peopleId">
+        insert into users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="phone != null">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="thirdPartyId != null">third_party_id,</if>
+            <if test="password != null">password,</if>
+            <if test="userRole != null">user_role,</if>
+            <if test="username != null and username != ''">username,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="age != null">age,</if>
+            <if test="gender != null">gender,</if>
+            <if test="height != null">height,</if>
+            <if test="originalweight != null">originalweight,</if>
+            <if test="currentweight != null">currentweight,</if>
+            <if test="fatPercentage != null">fat_percentage,</if>
+            <if test="healthStatus != null and healthStatus != ''">health_status,</if>
+            <if test="targetWeight != null">target_weight,</if>
+            <if test="preference != null">preference,</if>
+            <if test="allergies != null">allergies,</if>
+            <if test="registration != null">registration,</if>
+            <if test="lastLogin != null">last_login,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="thirdPartyId != null">#{thirdPartyId},</if>
+            <if test="password != null">#{password},</if>
+            <if test="userRole != null">#{userRole},</if>
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="age != null">#{age},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="height != null">#{height},</if>
+            <if test="originalweight != null">#{originalweight},</if>
+            <if test="currentweight != null">#{currentweight},</if>
+            <if test="fatPercentage != null">#{fatPercentage},</if>
+            <if test="healthStatus != null and healthStatus != ''">#{healthStatus},</if>
+            <if test="targetWeight != null">#{targetWeight},</if>
+            <if test="preference != null">#{preference},</if>
+            <if test="allergies != null">#{allergies},</if>
+            <if test="registration != null">#{registration},</if>
+            <if test="lastLogin != null">#{lastLogin},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUsers" parameterType="Users">
+        update users
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="thirdPartyId != null">third_party_id = #{thirdPartyId},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="userRole != null">user_role = #{userRole},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="originalweight != null">originalweight = #{originalweight},</if>
+            <if test="currentweight != null">currentweight = #{currentweight},</if>
+            <if test="fatPercentage != null">fat_percentage = #{fatPercentage},</if>
+            <if test="healthStatus != null and healthStatus != ''">health_status = #{healthStatus},</if>
+            <if test="targetWeight != null">target_weight = #{targetWeight},</if>
+            <if test="preference != null">preference = #{preference},</if>
+            <if test="allergies != null">allergies = #{allergies},</if>
+            <if test="registration != null">registration = #{registration},</if>
+            <if test="lastLogin != null">last_login = #{lastLogin},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where people_id = #{peopleId}
+    </update>
+
+    <delete id="deleteUsersByPeopleId" parameterType="Long">
+        delete from users where people_id = #{peopleId}
+    </delete>
+
+    <delete id="deleteUsersByPeopleIds" parameterType="String">
+        delete from users where people_id in 
+        <foreach item="peopleId" collection="array" open="(" separator="," close=")">
+            #{peopleId}
+        </foreach>
+    </delete>
+</mapper>

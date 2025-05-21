@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manageusers.mapper.DoctorAdviceMapper">
+    
+    <resultMap type="DoctorAdvice" id="DoctorAdviceResult">
+        <result property="adviceId"    column="advice_id"    />
+        <result property="peopleId"    column="people_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="adviceType"    column="advice_type"    />
+        <result property="adviceContent"    column="advice_content"    />
+        <result property="createTime"  column="date"  />
+    </resultMap>
+
+    <sql id="selectDoctorAdviceVo">
+        select advice_id, people_id, user_id, advice_type, advice_content, date from doctor_advice
+    </sql>
+
+    <select id="selectDoctorAdviceById" parameterType="Long" resultMap="DoctorAdviceResult">
+        <include refid="selectDoctorAdviceVo"/>
+        where advice_id = #{adviceId}
+    </select>
+    
+    <select id="selectDoctorAdviceByPeopleId" parameterType="String" resultMap="DoctorAdviceResult">
+        <include refid="selectDoctorAdviceVo"/>
+        where people_id = #{peopleId}
+        order by date desc
+    </select>
+
+    <select id="selectDoctorAdviceList" parameterType="DoctorAdvice" resultMap="DoctorAdviceResult">
+        <include refid="selectDoctorAdviceVo"/>
+        <where>  
+            <if test="peopleId != null  and peopleId != ''"> and people_id = #{peopleId}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="adviceType != null  and adviceType != ''"> and advice_type = #{adviceType}</if>
+            <if test="adviceContent != null  and adviceContent != ''"> and advice_content = #{adviceContent}</if>
+        </where>
+    </select>
+    
+    <insert id="insertDoctorAdvice" parameterType="DoctorAdvice" useGeneratedKeys="true" keyProperty="adviceId">
+        insert into doctor_advice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="peopleId != null">people_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="adviceType != null">advice_type,</if>
+            <if test="adviceContent != null">advice_content,</if>
+            <if test="createTime != null">date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="peopleId != null">#{peopleId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="adviceType != null">#{adviceType},</if>
+            <if test="adviceContent != null">#{adviceContent},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDoctorAdvice" parameterType="DoctorAdvice">
+        update doctor_advice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="peopleId != null">people_id = #{peopleId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="adviceType != null">advice_type = #{adviceType},</if>
+            <if test="adviceContent != null">advice_content = #{adviceContent},</if>
+            <if test="createTime != null">date = #{createTime},</if>
+        </trim>
+        where advice_id = #{adviceId}
+    </update>
+
+    <delete id="deleteDoctorAdviceById" parameterType="Long">
+        delete from doctor_advice where advice_id = #{adviceId}
+    </delete>
+
+    <delete id="deleteDoctorAdviceByIds" parameterType="String">
+        delete from doctor_advice where advice_id in 
+        <foreach item="adviceId" collection="array" open="(" separator="," close=")">
+            #{adviceId}
+        </foreach>
+    </delete>
+</mapper> 

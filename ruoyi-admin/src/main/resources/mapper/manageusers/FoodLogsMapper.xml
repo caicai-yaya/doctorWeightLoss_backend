@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manageusers.mapper.FoodLogsMapper">
+    
+    <resultMap type="FoodLogs" id="FoodLogsResult">
+        <result property="flId"    column="fl_id"    />
+        <result property="peopleId"    column="people_id"    />
+        <result property="foodId"    column="food_id"    />
+        <result property="date"    column="date"    />
+        <result property="mealType"    column="meal_type"    />
+        <result property="method"    column="method"    />
+        <result property="image"    column="image"    />
+        <result property="sum"    column="sum"    />
+        <result property="foodName" column="food_name" />
+        <result property="calories" column="calories" />
+    </resultMap>
+
+    <sql id="selectFoodLogsVo">
+        select fl.fl_id, fl.people_id, fl.food_id, fl.date, fl.meal_type, fl.method, fl.image, fl.sum,
+               f.food_name, (f.calories * fl.sum) as calories
+        from food_logs fl
+        left join foods f on fl.food_id = f.food_id
+    </sql>
+
+    <select id="selectFoodLogsById" parameterType="Long" resultMap="FoodLogsResult">
+        <include refid="selectFoodLogsVo"/>
+        where fl.fl_id = #{flId}
+    </select>
+    
+    <select id="selectFoodLogsByPeopleId" parameterType="String" resultMap="FoodLogsResult">
+        <include refid="selectFoodLogsVo"/>
+        where fl.people_id = #{peopleId}
+        order by fl.date desc
+    </select>
+
+    <select id="selectFoodLogsList" parameterType="FoodLogs" resultMap="FoodLogsResult">
+        <include refid="selectFoodLogsVo"/>
+        <where>  
+            <if test="peopleId != null  and peopleId != ''"> and fl.people_id = #{peopleId}</if>
+            <if test="foodId != null "> and fl.food_id = #{foodId}</if>
+            <if test="date != null "> and fl.date = #{date}</if>
+            <if test="mealType != null  and mealType != ''"> and fl.meal_type = #{mealType}</if>
+            <if test="method != null  and method != ''"> and fl.method = #{method}</if>
+            <if test="image != null  and image != ''"> and fl.image = #{image}</if>
+            <if test="sum != null "> and fl.sum = #{sum}</if>
+        </where>
+    </select>
+    
+    <insert id="insertFoodLogs" parameterType="FoodLogs" useGeneratedKeys="true" keyProperty="flId">
+        insert into food_logs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="peopleId != null">people_id,</if>
+            <if test="foodId != null">food_id,</if>
+            <if test="date != null">date,</if>
+            <if test="mealType != null">meal_type,</if>
+            <if test="method != null">method,</if>
+            <if test="image != null">image,</if>
+            <if test="sum != null">sum,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="peopleId != null">#{peopleId},</if>
+            <if test="foodId != null">#{foodId},</if>
+            <if test="date != null">#{date},</if>
+            <if test="mealType != null">#{mealType},</if>
+            <if test="method != null">#{method},</if>
+            <if test="image != null">#{image},</if>
+            <if test="sum != null">#{sum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFoodLogs" parameterType="FoodLogs">
+        update food_logs
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="peopleId != null">people_id = #{peopleId},</if>
+            <if test="foodId != null">food_id = #{foodId},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="mealType != null">meal_type = #{mealType},</if>
+            <if test="method != null">method = #{method},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="sum != null">sum = #{sum},</if>
+        </trim>
+        where fl_id = #{flId}
+    </update>
+
+    <delete id="deleteFoodLogsById" parameterType="Long">
+        delete from food_logs where fl_id = #{flId}
+    </delete>
+
+    <delete id="deleteFoodLogsByIds" parameterType="String">
+        delete from food_logs where fl_id in 
+        <foreach item="flId" collection="array" open="(" separator="," close=")">
+            #{flId}
+        </foreach>
+    </delete>
+</mapper> 

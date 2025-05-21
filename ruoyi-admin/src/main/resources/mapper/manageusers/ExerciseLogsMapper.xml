@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manageusers.mapper.ExerciseLogsMapper">
+    
+    <resultMap type="ExerciseLogs" id="ExerciseLogsResult">
+        <result property="elId"    column="el_id"    />
+        <result property="userId"    column="people_id"    />
+        <result property="exerciseId"    column="exercise_id"    />
+        <result property="exerciseName"    column="exercise_name"    />
+        <result property="date"    column="date"    />
+        <result property="duration"    column="duration"    />
+        <result property="caloriesBurned"    column="calories_burned"    />
+    </resultMap>
+
+    <sql id="selectExerciseLogsVo">
+        select el_id, people_id, exercise_id, exercise_name, date, duration, calories_burned from exercise_logs
+    </sql>
+
+    <select id="selectExerciseLogsById" parameterType="Long" resultMap="ExerciseLogsResult">
+        <include refid="selectExerciseLogsVo"/>
+        where el_id = #{elId}
+    </select>
+    
+    <select id="selectExerciseLogsByUserId" parameterType="String" resultMap="ExerciseLogsResult">
+        <include refid="selectExerciseLogsVo"/>
+        where people_id = #{userId}
+        order by date desc
+    </select>
+
+    <select id="selectExerciseLogsList" parameterType="ExerciseLogs" resultMap="ExerciseLogsResult">
+        <include refid="selectExerciseLogsVo"/>
+        <where>  
+            <if test="userId != null  and userId != ''"> and people_id = #{userId}</if>
+            <if test="exerciseId != null "> and exercise_id = #{exerciseId}</if>
+            <if test="exerciseName != null  and exerciseName != ''"> and exercise_name like concat('%', #{exerciseName}, '%')</if>
+            <if test="date != null "> and date = #{date}</if>
+            <if test="duration != null  and duration != ''"> and duration = #{duration}</if>
+            <if test="caloriesBurned != null  and caloriesBurned != ''"> and calories_burned = #{caloriesBurned}</if>
+        </where>
+    </select>
+    
+    <insert id="insertExerciseLogs" parameterType="ExerciseLogs" useGeneratedKeys="true" keyProperty="elId">
+        insert into exercise_logs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">people_id,</if>
+            <if test="exerciseId != null">exercise_id,</if>
+            <if test="exerciseName != null">exercise_name,</if>
+            <if test="date != null">date,</if>
+            <if test="duration != null">duration,</if>
+            <if test="caloriesBurned != null">calories_burned,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="exerciseId != null">#{exerciseId},</if>
+            <if test="exerciseName != null">#{exerciseName},</if>
+            <if test="date != null">#{date},</if>
+            <if test="duration != null">#{duration},</if>
+            <if test="caloriesBurned != null">#{caloriesBurned},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExerciseLogs" parameterType="ExerciseLogs">
+        update exercise_logs
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">people_id = #{userId},</if>
+            <if test="exerciseId != null">exercise_id = #{exerciseId},</if>
+            <if test="exerciseName != null">exercise_name = #{exerciseName},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="caloriesBurned != null">calories_burned = #{caloriesBurned},</if>
+        </trim>
+        where el_id = #{elId}
+    </update>
+
+    <delete id="deleteExerciseLogsById" parameterType="Long">
+        delete from exercise_logs where el_id = #{elId}
+    </delete>
+
+    <delete id="deleteExerciseLogsByIds" parameterType="String">
+        delete from exercise_logs where el_id in 
+        <foreach item="elId" collection="array" open="(" separator="," close=")">
+            #{elId}
+        </foreach>
+    </delete>
+</mapper> 

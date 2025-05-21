@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manageusers.mapper.WeightLogsMapper">
+    
+    <resultMap type="WeightLogs" id="WeightLogsResult">
+        <result property="weightLogsId"    column="weight_logs_id"    />
+        <result property="peopleId"    column="people_id"    />
+        <result property="date"    column="date"    />
+        <result property="originalweight"    column="originalweight"    />
+        <result property="currentweight"    column="currentweight"    />
+    </resultMap>
+
+    <sql id="selectWeightLogsVo">
+        select weight_logs_id, people_id, date, originalweight, currentweight from weight_logs
+    </sql>
+
+    <select id="selectWeightLogsById" parameterType="Long" resultMap="WeightLogsResult">
+        <include refid="selectWeightLogsVo"/>
+        where weight_logs_id = #{weightLogsId}
+    </select>
+    
+    <select id="selectWeightLogsByPeopleId" parameterType="String" resultMap="WeightLogsResult">
+        <include refid="selectWeightLogsVo"/>
+        where people_id = #{peopleId}
+        order by date asc
+    </select>
+
+    <select id="selectWeightLogsList" parameterType="WeightLogs" resultMap="WeightLogsResult">
+        <include refid="selectWeightLogsVo"/>
+        <where>  
+            <if test="peopleId != null  and peopleId != ''"> and people_id = #{peopleId}</if>
+            <if test="date != null "> and date = #{date}</if>
+            <if test="originalweight != null "> and originalweight = #{originalweight}</if>
+            <if test="currentweight != null "> and currentweight = #{currentweight}</if>
+        </where>
+    </select>
+    
+    <insert id="insertWeightLogs" parameterType="WeightLogs" useGeneratedKeys="true" keyProperty="weightLogsId">
+        insert into weight_logs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="peopleId != null">people_id,</if>
+            <if test="date != null">date,</if>
+            <if test="originalweight != null">originalweight,</if>
+            <if test="currentweight != null">currentweight,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="peopleId != null">#{peopleId},</if>
+            <if test="date != null">#{date},</if>
+            <if test="originalweight != null">#{originalweight},</if>
+            <if test="currentweight != null">#{currentweight},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWeightLogs" parameterType="WeightLogs">
+        update weight_logs
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="peopleId != null">people_id = #{peopleId},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="originalweight != null">originalweight = #{originalweight},</if>
+            <if test="currentweight != null">currentweight = #{currentweight},</if>
+        </trim>
+        where weight_logs_id = #{weightLogsId}
+    </update>
+
+    <delete id="deleteWeightLogsById" parameterType="Long">
+        delete from weight_logs where weight_logs_id = #{weightLogsId}
+    </delete>
+
+    <delete id="deleteWeightLogsByIds" parameterType="String">
+        delete from weight_logs where weight_logs_id in 
+        <foreach item="weightLogsId" collection="array" open="(" separator="," close=")">
+            #{weightLogsId}
+        </foreach>
+    </delete>
+</mapper> 
